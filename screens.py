@@ -11,98 +11,107 @@ import settings as sett
 from labels import labels
 from models import Vault, LogEntry
 
-active_user = ""
 
-double_divider = ft.Text(
-    value="==============================================="
-)
+class Interface(ft.Column):
+    def __init__(self, active_screen):
+        super().__init__()
+        self.active_screen = active_screen
+        self.alignment = ft.MainAxisAlignment.CENTER
+        self.spacing = 36
+        self.controls = [
+            header,
+            self.active_screen,
+        ]
+        self.active_user = ""
 
-single_short_divider = ft.Text(
-    value="----------"
-)
+        self.double_divider = ft.Text(
+            value="==============================================="
+        )
 
-security_level_options = [
-    ft.DropdownOption(key="1", text="1", style=sett.TXT_STYLE),
-    ft.DropdownOption(key="2", text="2", style=sett.TXT_STYLE),
-    ft.DropdownOption(key="3", text="3", style=sett.TXT_STYLE),
-    ft.DropdownOption(key="4", text="4", style=sett.TXT_STYLE),
-    ft.DropdownOption(key="5", text="5", style=sett.TXT_STYLE),
-]
+        self.single_short_divider = ft.Text(
+            value="----------"
+        )
 
-vault_status_options = [
-    ft.DropdownOption(key="active", text=labels[sett.LAN]["active"],
-                      style=sett.TXT_STYLE),
-    ft.DropdownOption(key="inactive", text=labels[sett.LAN]["inactive"],
-                      style=sett.TXT_STYLE),
-]
+        self.security_level_options = [
+            ft.DropdownOption(key="1", text="1", style=sett.TXT_STYLE),
+            ft.DropdownOption(key="2", text="2", style=sett.TXT_STYLE),
+            ft.DropdownOption(key="3", text="3", style=sett.TXT_STYLE),
+            ft.DropdownOption(key="4", text="4", style=sett.TXT_STYLE),
+            ft.DropdownOption(key="5", text="5", style=sett.TXT_STYLE),
+        ]
 
-vault_door_options = [
-    ft.DropdownOption(key="open", text=labels[sett.LAN]["open"],
-                      style=sett.TXT_STYLE),
-    ft.DropdownOption(key="closed", text=labels[sett.LAN]["closed"],
-                      style=sett.TXT_STYLE),
-]
+        self.vault_status_options = [
+            ft.DropdownOption(key="active", text=labels[sett.LAN]["active"],
+                              style=sett.TXT_STYLE),
+            ft.DropdownOption(key="inactive", text=labels[sett.LAN]["inactive"],
+                              style=sett.TXT_STYLE),
+        ]
 
+        self.vault_door_options = [
+            ft.DropdownOption(key="open", text=labels[sett.LAN]["open"],
+                              style=sett.TXT_STYLE),
+            ft.DropdownOption(key="closed", text=labels[sett.LAN]["closed"],
+                              style=sett.TXT_STYLE),
+        ]
 
-def on_hover_btn(e: ft.HoverEvent):
-    """On hover of text button"""
-    if e.data == "true":
-        e.control.style = sett.TXT_BTN_STYLE_HOVER
-    else:
-        e.control.style = sett.TXT_BTN_STYLE
-    e.control.update()
-
-
-def on_hover_box_btn(e: ft.HoverEvent):
-    """On hover of box buttons"""
-    if e.data == "true":
-        e.control.style = sett.BTN_STYLE_HOVER
-    else:
-        e.control.style = sett.BTN_STYLE
-    e.control.update()
-
-
-def on_hover_box(e: ft.HoverEvent):
-    """On hover of box menu item like Valut or Entry """
-    if e.data == "true":
-        e.control.bgcolor = sett.FONT_COLOR
-        e.control.content.controls[0].color = "black"
-        e.control.content.controls[1].color = "black"
-    else:
-        e.control.bgcolor = "transparent"
-        e.control.content.controls[0].color = sett.FONT_COLOR
-        e.control.content.controls[1].color = sett.FONT_COLOR
-    e.control.update()
-    e.control.content.controls[0].update()
-    e.control.content.controls[1].update()
-
-
-def validation_num(e):
-    e.control.error_text = ""
-    e.control.update()
-    value = e.control.value
-    if value.isdigit():
-        pass
-    else:
-        e.control.error_text = labels[sett.LAN]["num_value_error"]
+    @staticmethod
+    def on_hover_btn(e: ft.HoverEvent):
+        """On hover of text button"""
+        if e.data == "true":
+            e.control.style = sett.TXT_BTN_STYLE_HOVER
+        else:
+            e.control.style = sett.TXT_BTN_STYLE
         e.control.update()
 
+    @staticmethod
+    def on_hover_box_btn(e: ft.HoverEvent):
+        """On hover of box buttons"""
+        if e.data == "true":
+            e.control.style = sett.BTN_STYLE_HOVER
+        else:
+            e.control.style = sett.BTN_STYLE
+        e.control.update()
 
-def validation_empty_field(field, validator):
-    if field.value == "":
-        field.error_text = labels[sett.LAN]["not_empty"]
-        field.update()
-        validator.append(field)
-    return validator
+    @staticmethod
+    def on_hover_box(e: ft.HoverEvent):
+        """On hover of box menu item like Valut or Entry """
+        if e.data == "true":
+            e.control.bgcolor = sett.MAIN_COLOR
+            e.control.content.controls[0].color = "black"
+            e.control.content.controls[1].color = "black"
+        else:
+            e.control.bgcolor = "transparent"
+            e.control.content.controls[0].color = sett.MAIN_COLOR
+            e.control.content.controls[1].color = sett.MAIN_COLOR
+        e.control.update()
+        e.control.content.controls[0].update()
+        e.control.content.controls[1].update()
 
+    @staticmethod
+    def validation_num(e):
+        e.control.error_text = ""
+        e.control.update()
+        value = e.control.value
+        if value.isdigit():
+            pass
+        else:
+            e.control.error_text = labels[sett.LAN]["num_value_error"]
+            e.control.update()
 
-def logout(e):
-    global active_user
-    active_user = ""
-    interface.controls[1] = LogInPage()
-    interface.update()
-    login_screen.password.value = ""
-    login_screen.username.value = ""
+    @staticmethod
+    def validation_empty_field(field, validator):
+        if field.value == "":
+            field.error_text = labels[sett.LAN]["not_empty"]
+            field.update()
+            validator.append(field)
+        return validator
+
+    def logout(self, e):
+        interface.active_user = ""
+        interface.controls[1] = LogInPage()
+        interface.update()
+        login_screen.password.value = ""
+        login_screen.username.value = ""
 
 
 class ControlButton(ft.TextButton):
@@ -112,17 +121,17 @@ class ControlButton(ft.TextButton):
         super().__init__(
             text=f"[{labels[sett.LAN][text]}]",
             style=sett.TXT_BTN_STYLE,
-            on_hover=on_hover_btn,
+            on_hover=interface.on_hover_btn,
             on_click=on_click)
 
 
 class ErrorMessage(ft.SnackBar):
-    """Dfinition of a error message display."""
+    """Definition of a error message display."""
 
     def __init__(self, text):
         super().__init__(
             open=True,
-            bgcolor=sett.FONT_COLOR,
+            bgcolor=sett.MAIN_COLOR,
             content=ft.Text(
                 value=labels[sett.LAN][text],
                 color=sett.DARK_COLOR,
@@ -138,7 +147,7 @@ def error_message(text, page):
 
 
 class DeleteDialog(ft.AlertDialog):
-    """Dfinition of a delete dialog."""
+    """Definition of a delete dialog."""
 
     def __init__(self, label, text, on_click):
         super().__init__(
@@ -147,7 +156,7 @@ class DeleteDialog(ft.AlertDialog):
             shape=ft.RoundedRectangleBorder(radius=0),
 
             title=ft.Text(labels[sett.LAN][label],
-                          color=sett.FONT_COLOR),
+                          color=sett.MAIN_COLOR),
             content=ft.Text(labels[sett.LAN][text]),
             actions=[
                 ControlButton(text="yes", on_click=on_click),
@@ -165,7 +174,7 @@ class InputField(ft.TextField):
             width=width,
             bgcolor=sett.DARK_COLOR,
             border_color="transparent",
-            color=sett.FONT_COLOR,
+            color=sett.MAIN_COLOR,
             height=height,
             border_radius=0,
             error_style=sett.ERROR_STYLE,
@@ -184,7 +193,7 @@ class DropdownList(ft.Dropdown):
             bgcolor="#073605",
             border_color=sett.DARK_COLOR,
             border_radius=0,
-            color=sett.FONT_COLOR,
+            color=sett.MAIN_COLOR,
             filled=True,
             fill_color=sett.DARK_COLOR,
             hint_text=labels[sett.LAN]["select"],
@@ -211,7 +220,6 @@ class Header(ft.Container):
     """Header of the application."""
 
     def __init__(self):
-        print("Header")
         try:
             with Session(engine) as header_session:
                 active_vault = header_session.scalar(
@@ -224,7 +232,7 @@ class Header(ft.Container):
             vault_number = labels[sett.LAN]["no_active_vault_short"]
 
         header_text = ft.Text(
-            color=sett.FONT_COLOR,
+            color=sett.MAIN_COLOR,
             text_align=ft.TextAlign.CENTER,
             size=18,
             weight=ft.FontWeight.BOLD,
@@ -256,9 +264,12 @@ class LogInPage(ft.Container):
             width=208,
             height=54,
             style=sett.BTN_STYLE,
-            on_hover=on_hover_box_btn,
+            on_hover=interface.on_hover_box_btn,
             on_click=self.verification
         )
+
+        exit_btn = ControlButton("exit",
+                                 on_click=lambda e: e.page.window.destroy())
 
         super().__init__()
         """Login screen layout"""
@@ -277,7 +288,7 @@ class LogInPage(ft.Container):
                         content=(
                             ft.Column(
                                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                                spacing=42,
+                                spacing=32,
                                 controls=[
                                     logo,
                                     ft.Container(height=2),
@@ -302,7 +313,8 @@ class LogInPage(ft.Container):
                                             self.password,
                                         ]
                                     ),
-                                    enter_btn
+                                    enter_btn,
+                                    exit_btn
                                 ]
                             )
                         )
@@ -322,7 +334,7 @@ class LogInPage(ft.Container):
     def unauthorized(self, text):
         """Plays error sound when credentials are invalid."""
         audio = ft.Audio(
-            src="./resources/sounds/error-126627.mp3",
+            src="resources/sounds/error.mp3",
             autoplay=True,
             volume=1.0
         )
@@ -338,8 +350,8 @@ class LogInPage(ft.Container):
         Verifies credentials and redirects to the menu screen or Game Master menu screen.
         Saves game master session.
         """
-        global active_user
-
+        e.control.style = sett.BTN_STYLE
+        e.control.update()
         with Session(engine) as login_session:
             active_vault_data = select(Vault).where(
                 Vault.status == "active")
@@ -348,14 +360,14 @@ class LogInPage(ft.Container):
         if self.username.value == "EXIT":
             e.page.window.destroy()
         elif self.username.value.lower() == "game master" and self.password.value.lower() == "fallout":
-            active_user = "game master"
+            interface.active_user = "game master"
             self.clear_credentials()
             interface.controls[1] = GameMasterMenu()
             interface.update()
         elif self.username.value.lower() == "game master" and self.password.value.lower() != "fallout":
             self.unauthorized("gm_error")
         elif active_vault:
-            if self.username.value.lower() == 'haker' and self.password.value:
+            if self.username.value.lower() == 'hacker' and self.password.value.isdigit():
                 result = self.password.value
                 result_int = int(result)
                 difficulty = active_vault.security_level
@@ -387,72 +399,6 @@ class LogInPage(ft.Container):
             self.username.update()
             self.password.update()
 
-        # logo = ft.Image(
-        #     width=434,
-        #     height=143,
-        #     src="./resources/images/Logo.png"
-        # )
-        #
-        # enter_btn = ft.OutlinedButton(
-        #     text=labels[sett.LAN]["enter"],
-        #     width=208,
-        #     height=54,
-        #     style=sett.BTN_STYLE,
-        #     on_hover=on_hover_box_btn,
-        #     on_click=verification
-        # )
-
-        # super().__init__()
-        # """Login screen layout"""
-        # self.width = 1850
-        # self.height = 586
-        # self.content = (
-        #     ft.Row(
-        #         alignment=ft.MainAxisAlignment.CENTER,
-        #         controls=[
-        #             ft.Container(
-        #                 bgcolor=ft.Colors.with_opacity(0.3, "#223026"),
-        #                 border_radius=50,
-        #                 width=538,
-        #                 height=586,
-        #                 padding=52,
-        #                 content=(
-        #                     ft.Column(
-        #                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        #                         spacing=42,
-        #                         controls=[
-        #                             logo,
-        #                             ft.Container(height=2),
-        #                             ft.Row(
-        #                                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        #                                 expand=True,
-        #                                 controls=[
-        #                                     ft.Text(
-        #                                         value=labels[sett.LAN]["login"]
-        #                                     ),
-        #                                     self.username,
-        #                                 ]
-        #                             ),
-        #                             ft.Row(
-        #                                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        #                                 expand=True,
-        #                                 controls=[
-        #                                     ft.Text(
-        #                                         value=labels[sett.LAN][
-        #                                             "password"]
-        #                                     ),
-        #                                     self.password,
-        #                                 ]
-        #                             ),
-        #                             enter_btn
-        #                         ]
-        #                     )
-        #                 )
-        #             )
-        #         ]
-        #     )
-        # )
-
 
 class MenuScreen(ft.Container):
     """Main menu screen for non-Game Master users."""
@@ -466,7 +412,7 @@ class MenuScreen(ft.Container):
             on_click=self.change_door_status,
             text=f"{labels[sett.LAN]["status"]}: [{self.door_status}]",
             style=sett.TXT_BTN_STYLE,
-            on_hover=on_hover_btn
+            on_hover=interface.on_hover_btn
         )
         self.log_entries_btn = ControlButton(
             text="log_entries",
@@ -474,7 +420,7 @@ class MenuScreen(ft.Container):
         )
         self.logout_btn = ControlButton(
             text="logout",
-            on_click=logout
+            on_click=interface.logout
         )
 
         # Menu Screen layout
@@ -493,19 +439,19 @@ class MenuScreen(ft.Container):
                         value="- RobCo Trespasser Management System -",
                         weight=ft.FontWeight.BOLD
                     ),
-                    double_divider,
+                    interface.double_divider,
                     ft.Text(
                         value=labels[sett.LAN]["env_sensors"]
                     ),
                     ft.Text(
                         value=labels[sett.LAN]["monitoring"]
                     ),
-                    single_short_divider,
+                    interface.single_short_divider,
                     self.door_status_btn,
                     self.log_entries_btn,
-                    single_short_divider,
+                    interface.single_short_divider,
                     self.logout_btn,
-                    double_divider
+                    interface.double_divider
                 ]
             )
         )
@@ -519,7 +465,6 @@ class MenuScreen(ft.Container):
                 active_vault = active_vault_session.scalar(
                     active_vault_data)
                 return labels[sett.LAN][str(active_vault.door_status)]
-                # self.door_status = labels[sett.LAN][active_vault_door_status]
         except Exception:
             error_message(text="problem_loading_data", page=self.page)
 
@@ -562,7 +507,7 @@ class LogEntriesScreen(ft.Container):
                 height=75,
                 bgcolor="transparent",
                 border=sett.BORDER,
-                on_hover=on_hover_box,
+                on_hover=interface.on_hover_box,
                 on_click=handle_click,
                 content=ft.Column(
                     width=142,
@@ -577,7 +522,6 @@ class LogEntriesScreen(ft.Container):
     # Screen definition
     def __init__(self):
         super().__init__()
-        global active_user
 
         # Load entries from DB
         with Session(engine) as session:
@@ -599,8 +543,20 @@ class LogEntriesScreen(ft.Container):
         self.divider = ft.Text(value="")
         self.delete_btn = ft.Container()
 
+        self.entry_details = ft.Container(
+            width=sett.LOG_ENTRY_WIDTH,
+            height=614,
+            content=ft.Column(
+                controls=[
+                    self.detail_title,
+                    self.detail_date,
+                    self.detail_population,
+                    self.divider,
+                    self.detail_text,
+                    self.delete_btn]))
+
         # Log Screen layout
-        log_entries = self.build_menu_items(active_user)
+        log_entries = self.build_menu_items(interface.active_user)
         back_btn = ControlButton(text="back", on_click=self.back)
 
         self.height = 664
@@ -621,22 +577,9 @@ class LogEntriesScreen(ft.Container):
                             thickness=3,
                             leading_indent=50,
                             trailing_indent=50,
-                            color=sett.FONT_COLOR
+                            color=sett.MAIN_COLOR
                         ),
-                        ft.Container(
-                            width=sett.LOG_ENTRY_WIDTH,
-                            height=614,
-                            content=ft.Column(
-                                controls=[
-                                    self.detail_title,
-                                    self.detail_date,
-                                    self.detail_population,
-                                    self.divider,
-                                    self.detail_text,
-                                    self.delete_btn
-                                ]
-                            )
-                        )
+                        self.entry_details,
                     ]
                 ),
                 back_btn
@@ -662,9 +605,10 @@ class LogEntriesScreen(ft.Container):
     def save_entry(self, e):
         """Saves a new log entry in the database."""
         empty_fields = []
-        validation_empty_field(self.new_entry_title, empty_fields)
-        validation_empty_field(self.new_entry_date, empty_fields)
-        validation_empty_field(self.new_entry_population, empty_fields)
+        interface.validation_empty_field(self.new_entry_title, empty_fields)
+        interface.validation_empty_field(self.new_entry_date, empty_fields)
+        interface.validation_empty_field(self.new_entry_population,
+                                         empty_fields)
 
         if not empty_fields and self.new_entry_title.value.isdigit() and self.new_entry_population.value.isdigit():
             with Session(engine) as session:
@@ -703,10 +647,11 @@ class LogEntriesScreen(ft.Container):
         self.new_entry_title = InputField(
             keyboard_type=ft.KeyboardType.NUMBER,
             prefix_text=labels[sett.LAN]["entry_prefix"],
-            on_change=validation_num
+            on_change=interface.validation_num
         )
         self.new_entry_population_tag = ft.Text(labels[sett.LAN]["population"])
-        self.new_entry_population = InputField(on_change=validation_num)
+        self.new_entry_population = InputField(
+            on_change=interface.validation_num)
         self.new_entry_date_tag = ft.Text(labels[sett.LAN]["date"])
         self.new_entry_date = InputField(
             read_only=True,
@@ -715,6 +660,7 @@ class LogEntriesScreen(ft.Container):
         self.new_entry_text = InputField(
             multiline=True,
             width=sett.SIDE_SCREEN_WIDTH,
+            height=None,
             min_lines=10,
             max_lines=10,
         )
@@ -725,7 +671,7 @@ class LogEntriesScreen(ft.Container):
             controls=[
                 ft.Text(value=labels[sett.LAN]["add_log_entry"],
                         style=sett.TXT_STYLE),
-                double_divider,
+                interface.double_divider,
                 ft.Row([self.new_entry_title_tag, self.new_entry_title],
                        width=sett.FORM_FIELD_WIDTH,
                        alignment=ft.MainAxisAlignment.END),
@@ -737,7 +683,7 @@ class LogEntriesScreen(ft.Container):
                        width=sett.FORM_FIELD_WIDTH,
                        alignment=ft.MainAxisAlignment.END),
                 self.new_entry_text,
-                double_divider,
+                interface.double_divider,
                 ft.Row([save_entry_btn],
                        width=sett.SIDE_SCREEN_WIDTH,
                        alignment=ft.MainAxisAlignment.END),
@@ -758,15 +704,19 @@ class LogEntriesScreen(ft.Container):
 
         interface.controls[1] = LogEntriesScreen()
         interface.update()
+        e.page.close(self.delete_dlg)
 
     def show_details(self, title, date, population, text, entry_id):
         """Displays selected log entry in the main part of the screen."""
+
+        self.content.controls[0].controls[2] = self.entry_details
+
         self.detail_title.value = title
         self.detail_date.value = f"{labels[sett.LAN]['date']}: {date}"
         self.detail_population.value = f"{labels[sett.LAN]['population']}: {population}"
         self.detail_text.value = text
         self.divider.value = "=" * 94
-
+        self.content.controls[0].update()
         for entry_detail in [self.detail_title, self.detail_date,
                              self.detail_population,
                              self.detail_text, self.divider]:
@@ -774,21 +724,21 @@ class LogEntriesScreen(ft.Container):
 
         self.entry_id = entry_id
 
-        if active_user == "game master":
-            delete_dlg = DeleteDialog(
+        if interface.active_user == "game master":
+            self.delete_dlg = DeleteDialog(
                 label="delete_entry",
                 text="delete_entry_confirmation",
                 on_click=self.delete_entry_confirmed
             )
             self.delete_btn.content = ControlButton(
                 text="delete_entry",
-                on_click=lambda e: e.page.open(delete_dlg)
+                on_click=lambda e: e.page.open(self.delete_dlg)
             )
             self.delete_btn.update()
 
     def back(self, e):
         """Return to previous menu depending on a user."""
-        if active_user == "game master":
+        if interface.active_user == "game master":
             interface.controls[1] = GameMasterMenu()
         else:
             interface.controls[1] = MenuScreen()
@@ -796,7 +746,7 @@ class LogEntriesScreen(ft.Container):
 
 
 class GameMasterMenu(ft.Container):
-    """Game MAster Menu screen definition"""
+    """Game Master Menu screen definition"""
 
     def __init__(self):
         super().__init__()
@@ -810,7 +760,7 @@ class GameMasterMenu(ft.Container):
 
         logout_btn = ControlButton(
             text="logout",
-            on_click=logout)
+            on_click=interface.logout)
 
         try:
             with Session(engine) as session:
@@ -822,7 +772,7 @@ class GameMasterMenu(ft.Container):
         except Exception as e:
             self.vaults = ["Error loading vaults"]
 
-        """Game Master Menu layout"""
+        # Game Master Menu layout
         self.width = 1850
         self.height = 586
         self.padding = ft.Padding(
@@ -838,19 +788,19 @@ class GameMasterMenu(ft.Container):
                         value="- Game Master's Vault Manager -",
                         weight=ft.FontWeight.BOLD
                     ),
-                    double_divider,
+                    interface.double_divider,
                     ft.Row(
                         controls=[
                             ft.Text(
                                 f"{labels[sett.LAN]["active_vault"]}: {self.active_vault}"),
                         ]
                     ),
-                    single_short_divider,
+                    interface.single_short_divider,
                     vault_management_btn,
                     log_entries,
-                    single_short_divider,
+                    interface.single_short_divider,
                     logout_btn,
-                    double_divider
+                    interface.double_divider
                 ]
             )
         )
@@ -859,7 +809,6 @@ class GameMasterMenu(ft.Container):
         """Opens screen with vault management options."""
         interface.controls[1] = VaultManager()
         interface.update()
-        print(active_user)
 
     def mg_log_entries(self, e):
         """Opens screen with log entries."""
@@ -882,7 +831,7 @@ class VaultManager(ft.Container):
                 height=75,
                 bgcolor="transparent",
                 border=sett.BORDER,
-                on_hover=on_hover_box,
+                on_hover=interface.on_hover_box,
                 on_click=handle_click,
                 content=ft.Column(
                     width=142,
@@ -920,9 +869,11 @@ class VaultManager(ft.Container):
         # New Vault form
         self.vault_title = ft.Text("", weight=ft.FontWeight.BOLD,
                                    style=sett.ENTRY_TXT_STYLE)
-        self.vault_status = DropdownList(options=vault_status_options)
-        self.vault_door_status = DropdownList(options=vault_door_options)
-        self.vault_security_level = DropdownList(options=security_level_options)
+        self.vault_status = DropdownList(options=interface.vault_status_options)
+        self.vault_door_status = DropdownList(
+            options=interface.vault_door_options)
+        self.vault_security_level = DropdownList(
+            options=interface.security_level_options)
         self.overseer_password = InputField(width=200)
 
         # New Vault form layout
@@ -989,7 +940,7 @@ class VaultManager(ft.Container):
                         ),
                         ft.VerticalDivider(
                             thickness=3, leading_indent=50, trailing_indent=50,
-                            color=sett.FONT_COLOR
+                            color=sett.MAIN_COLOR
                         ),
                         self.vault_for_display,
                     ]
@@ -1011,7 +962,7 @@ class VaultManager(ft.Container):
 
     def add_new_vault_form(self, e):
         """Show form for adding a new vault."""
-        self.new_vault_title = InputField(on_change=validation_num)
+        self.new_vault_title = InputField(on_change=interface.validation_num)
         self.vault_status.value = ""
         self.vault_door_status.value = ""
         self.vault_security_level.value = ""
@@ -1021,7 +972,7 @@ class VaultManager(ft.Container):
             controls=[
                 ft.Text(labels[sett.LAN]["add_new_vault"], style=sett.TXT_STYLE,
                         weight=ft.FontWeight.BOLD),
-                double_divider,
+                interface.double_divider,
                 ft.Row(
                     width=sett.VAULT_WIDTH,
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -1039,7 +990,7 @@ class VaultManager(ft.Container):
                 self.vault_status_row,
                 self.vault_security_level_row,
                 self.vault_door_status_row,
-                double_divider,
+                interface.double_divider,
                 self.overseer_password_row,
                 ft.Row(width=sett.SIDE_SCREEN_WIDTH,
                        alignment=ft.MainAxisAlignment.END,
@@ -1052,11 +1003,12 @@ class VaultManager(ft.Container):
     def save_new_vault(self, e):
         """Save a new vault in the database."""
         empty_fields = []
-        validation_empty_field(self.new_vault_title, empty_fields)
-        validation_empty_field(self.vault_status, empty_fields)
-        validation_empty_field(self.overseer_password, empty_fields)
-        validation_empty_field(self.vault_security_level, empty_fields)
-        validation_empty_field(self.vault_door_status, empty_fields)
+        interface.validation_empty_field(self.new_vault_title, empty_fields)
+        interface.validation_empty_field(self.vault_status, empty_fields)
+        interface.validation_empty_field(self.overseer_password, empty_fields)
+        interface.validation_empty_field(self.vault_security_level,
+                                         empty_fields)
+        interface.validation_empty_field(self.vault_door_status, empty_fields)
 
         if not empty_fields and self.new_vault_title.value.isdigit():
             try:
@@ -1100,7 +1052,7 @@ class VaultManager(ft.Container):
             bgcolor=sett.POP_UP_COLOR,
             shape=ft.RoundedRectangleBorder(radius=0),
             title=ft.Text(labels[sett.LAN]["vault_update"],
-                          color=sett.FONT_COLOR),
+                          color=sett.MAIN_COLOR),
             content=ft.Text(labels[sett.LAN]["vault_updated"]),
             actions=[ControlButton("ok", on_click=lambda e: e.page.close(
                 update_dlg))],
@@ -1138,11 +1090,11 @@ class VaultManager(ft.Container):
             self.vault_information = ft.Column(
                 controls=[
                     self.vault_title,
-                    double_divider,
+                    interface.double_divider,
                     self.vault_status_row,
                     self.vault_security_level_row,
                     self.vault_door_status_row,
-                    double_divider,
+                    interface.double_divider,
                     self.overseer_password_row,
                     ft.Row(
                         width=sett.SIDE_SCREEN_WIDTH,
@@ -1160,7 +1112,6 @@ class VaultManager(ft.Container):
 
         except Exception as e:
             error_message("problem_loading_vault", e.page)
-            print("Data problem", e)
 
     def load_vault_list(self):
         """Load all vaults into the sidebar list."""
@@ -1188,15 +1139,6 @@ class VaultManager(ft.Container):
 engine = create_engine("sqlite:///resources/database/vault.db")
 
 header = Header()
+interface = Interface(None)
 login_screen = LogInPage()
-vault_manager = VaultManager()
-
-interface = ft.Column(
-    alignment=ft.MainAxisAlignment.CENTER,
-    spacing=36,
-    controls=[
-        header,
-        login_screen,
-    ]
-
-)
+interface.controls[1] = login_screen
